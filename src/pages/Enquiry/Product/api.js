@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URL = "http://127.0.0.1:8000/api/product_enquiry"; // Adjust the URL as needed
 
-export const fetchEnquiries = async () => {
+export const getEnquiries = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/list/`);
     return response.data; // Assuming the response structure is { data: [...] }
@@ -22,7 +22,7 @@ export const createEnquiry = async (enquiryData) => {
   }
 };
 
-export const updateEnquiry = async (id, enquiryData) => {
+export const editEnquiry = async (id, enquiryData) => {
   try {
     const response = await axios.put(`${BASE_URL}/update/${id}/`, enquiryData);
     return response.data; // Assuming the response structure is the updated enquiry
@@ -51,14 +51,37 @@ export const viewEnquiry = async (id) => {
   }
 };
 
-export const getOrganizations = async () => {
+export const getProducts = async () => {
   try {
-    const response = await axios.get(
-      "http://127.0.0.1:8000/api/product/list/"
-    );
-    return response.data; // Assuming this endpoint returns a list of organizations
+    const response = await axios.get("http://127.0.0.1:8000/api/product/list/");
+
+    // Extract id and name for each product
+    const products = response.data.map((product) => ({
+      id: product.id,
+      name: product.name,
+    }));
+
+    return products; // Return the filtered products array
   } catch (error) {
-    console.error("Failed to fetch organizations:", error);
+    console.error("Failed to fetch products:", error);
+    throw error; // Re-throw error to be handled by the calling function
+  }
+};
+
+
+export const fetchProducts = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/product/list/");
+
+    // Extract id and name for each product
+    const products = response.data.map((product) => ({
+      id: product.id,
+      name: product.name,
+    }));
+
+    return products; // Return the filtered products array
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
     throw error; // Re-throw error to be handled by the calling function
   }
 };

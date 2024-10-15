@@ -1,176 +1,186 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getProducts, createEnquiry } from "./api"; // Ensure you're importing the correct API function
 
-const AddEnquiryModal = ({ isOpen, onClose, onAdd }) => {
+const AddEnquiryModal = ({ isVisible, onClose, onAdd }) => {
   const [formData, setFormData] = useState({
-    productName: "",
-    personName: "",
+    name: "",
     email: "",
     mobile: "",
     subject: "",
     message: "",
-    status: "",
+    status: "PENDING", // Set a default status value
+    products: "", // Initially empty string for product, changed from 'product'
   });
+
+  const [products, setProducts] = useState([]); // State to hold products
+
+  useEffect(() => {
+    if (isVisible) {
+      fetchProducts(); // Fetch products when the modal is visible
+      // Reset form data when the modal opens
+      setFormData({
+        name: "",
+        email: "",
+        mobile: "",
+        subject: "",
+        message: "",
+        status: "PENDING",
+        products: "", // Reset products
+      });
+    }
+  }, [isVisible]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await getProducts(); // Fetch products from the API
+      setProducts(response); // Assuming the response is an array of products
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAdd(formData);
-    onClose();
-  };
+    try {
+      // Modify the formData to ensure product ID is sent under 'products'
+      const submissionData = {
+        ...formData,
+        products: formData.products, // Ensure products field is used here
+      };
 
-  if (!isOpen) return null;
+      await onAdd(submissionData); // Pass modified form data to onAdd
+      onClose(); // Close the modal after submission
+    } catch (error) {
+      console.error("Error adding enquiry:", error);
+    }
+  };
 
   return (
-    <div className="modal fade show" style={{ display: "block" }} role="dialog">
-      <div className="modal-dialog modal-dialog-centered">
+    <div
+      className={`modal ${isVisible ? "show" : ""}`}
+      style={{ display: isVisible ? "block" : "none" }}
+    >
+      <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Add New Enquiry</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={onClose}
-              aria-label="Close"
-            ></button>
+            <h5 className="modal-title">Add Enquiry</h5>
           </div>
-          <div className="modal-body">
-            <form
-              onSubmit={handleSubmit}
-              className="needs-validation"
-              noValidate
-            >
-              {/* Form Fields */}
-              <div className="mb-3">
-                <label className="form-label">Product Name</label>
+          <form onSubmit={handleSubmit}>
+            <div className="modal-body">
+              {/* Product Selection */}
+              <div className="form-group">
+                <label htmlFor="products">Product</label>
                 <select
-                  name="productName"
-                  className="form-select"
-                  required
+                  name="products" // Ensure this matches the formData key
+                  value={formData.products}
                   onChange={handleChange}
+                  className="form-control"
+                  required
                 >
                   <option value="" disabled>
                     Select a product
                   </option>
-                  <option value="coal">Coal</option>
-                  <option value="lumber">Lumber</option>
-                  <option value="steel">Steel</option>
-                  <option value="cement">Cement</option>
+                  {products.map((product) => (
+                    <option key={product.id} value={product.id}>
+                      {product.name}{" "}
+                      {/* Ensure this matches the API response structure */}
+                    </option>
+                  ))}
                 </select>
-                <div className="invalid-feedback">
-                  Please select a product name.
-                </div>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Person Name</label>
+              {/* Other form fields */}
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
                 <input
                   type="text"
-                  name="personName"
-                  className="form-control"
-                  placeholder="Enter person's name"
-                  required
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
+                  className="form-control"
+                  required
                 />
-                <div className="invalid-feedback">
-                  Please enter a person's name.
-                </div>
               </div>
-
-              <div className="mb-3">
-                <label className="form-label">Email</label>
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
                 <input
                   type="email"
                   name="email"
-                  className="form-control"
-                  placeholder="Enter email"
-                  required
+                  value={formData.email}
                   onChange={handleChange}
+                  className="form-control"
+                  required
                 />
-                <div className="invalid-feedback">
-                  Please enter a valid email.
-                </div>
               </div>
-
-              <div className="mb-3">
-                <label className="form-label">Mobile</label>
+              <div className="form-group">
+                <label htmlFor="mobile">Mobile</label>
                 <input
-                  type="tel"
+                  type="text"
                   name="mobile"
-                  className="form-control"
-                  placeholder="Enter mobile number"
-                  required
+                  value={formData.mobile}
                   onChange={handleChange}
+                  className="form-control"
+                  required
                 />
-                <div className="invalid-feedback">
-                  Please enter a mobile number.
-                </div>
               </div>
-
-              <div className="mb-3">
-                <label className="form-label">Subject</label>
+              <div className="form-group">
+                <label htmlFor="subject">Subject</label>
                 <input
                   type="text"
                   name="subject"
-                  className="form-control"
-                  placeholder="Enter subject"
-                  required
+                  value={formData.subject}
                   onChange={handleChange}
+                  className="form-control"
+                  required
                 />
-                <div className="invalid-feedback">Please enter a subject.</div>
               </div>
-
-              <div className="mb-3">
-                <label className="form-label">Message</label>
+              <div className="form-group">
+                <label htmlFor="message">Message</label>
                 <textarea
                   name="message"
-                  className="form-control"
-                  rows="5"
-                  placeholder="Enter your message"
-                  required
+                  value={formData.message}
                   onChange={handleChange}
+                  className="form-control"
+                  required
                 ></textarea>
-                <div className="invalid-feedback">Please enter a message.</div>
               </div>
-
-              <div className="mb-3">
-                <label className="form-label">Status</label>
+              {/* Status dropdown */}
+              <div className="form-group">
+                <label htmlFor="status">Status</label>
                 <select
                   name="status"
-                  className="form-select"
-                  required
+                  value={formData.status}
                   onChange={handleChange}
+                  className="form-control"
+                  required
                 >
-                  <option value="" disabled>
-                    Select status
-                  </option>
-                  <option value="approved">Approved</option>
-                  <option value="pending">Pending</option>
-                  <option value="denied">Denied</option>
+                  <option value="PENDING">PENDING</option>
+                  <option value="APPROVED">APPROVED</option>
+                  <option value="DENIED">DENIED</option>
                 </select>
-                <div className="invalid-feedback">Please select a status.</div>
               </div>
-            </form>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onClose}
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              className="btn btn-success"
-              onClick={handleSubmit}
-            >
-              Add Enquiry
-            </button>
-          </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={onClose}
+              >
+                Close
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Submit
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

@@ -1,23 +1,49 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import { getProducts } from "./api"; // Assuming this is your API file
 
-const EditEnquiryModal = ({ isOpen, onClose, enquiry, onEditEnquiry }) => {
+const EditEnquiryModal = ({ isVisible, onClose, onSave, selectedEnquiry }) => {
   const [formData, setFormData] = useState({
-    productName: "",
-    personName: "",
+    name: "",
     email: "",
     mobile: "",
     subject: "",
     message: "",
     status: "",
+    product: "", // State for the selected product
   });
 
-  useEffect(() => {
-    if (enquiry) {
-      setFormData(enquiry);
+  const [products, setProducts] = useState([]); // State for available products
+
+  // Fetch products from the API
+  const fetchProducts = async () => {
+    try {
+      const response = await getProducts(); // Fetch products from the API
+      setProducts(response); // Assuming the response is an array of products
+    } catch (error) {
+      console.error("Error fetching products:", error);
     }
-  }, [enquiry]);
+  };
+
+  useEffect(() => {
+    fetchProducts(); // Fetch products when the component mounts
+  }, []);
+
+  useEffect(() => {
+    // Populate form data when selectedEnquiry changes
+    if (selectedEnquiry) {
+      setFormData({
+        name: selectedEnquiry.name || "",
+        email: selectedEnquiry.email || "",
+        mobile: selectedEnquiry.mobile || "",
+        subject: selectedEnquiry.subject || "",
+        message: selectedEnquiry.message || "",
+        status: selectedEnquiry.status || "",
+        product: selectedEnquiry.products || "", // Ensure this matches the product ID
+      });
+    }
+  }, [selectedEnquiry]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,168 +55,155 @@ const EditEnquiryModal = ({ isOpen, onClose, enquiry, onEditEnquiry }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onEditEnquiry(formData);
+    if (onSave) {
+      onSave(formData);
+    }
+  };
+
+  // Reset form when modal is closed
+  const handleClose = () => {
+    setFormData({
+      name: "",
+      email: "",
+      mobile: "",
+      subject: "",
+      message: "",
+      status: "",
+      product: "", // Reset product selection
+    });
     onClose();
   };
 
   return (
-    <Modal show={isOpen} onHide={onClose}>
+    <Modal show={isVisible} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Edit Enquiry</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form
-          autoComplete="off"
-          className="needs-validation"
-          onSubmit={handleSubmit}
-          noValidate
-        >
+        <form onSubmit={handleSubmit}>
+          {/* Products Select Dropdown */}
           <div className="mb-3">
-            <label htmlFor="editProductNameField" className="form-label">
-              Product Name
+            <label htmlFor="product" className="form-label">
+              Product
             </label>
             <select
-              id="editProductNameField"
-              className="form-select"
-              name="productName"
-              value={formData.productName || ""}
+              name="product"
+              value={formData.product || ""} // Ensure this matches selected product
               onChange={handleChange}
+              className="form-control"
               required
             >
               <option value="" disabled>
                 Select a product
               </option>
-              <option value="coal">Coal</option>
-              <option value="lumber">Lumber</option>
-              <option value="steel">Steel</option>
-              <option value="cement">Cement</option>
-              {/* Add more products as needed */}
+              {products.map((product) => (
+                <option key={product.id} value={product.id}>
+                  {product.name}
+                </option>
+              ))}
             </select>
-            <div className="invalid-feedback">
-              Please select a product name.
-            </div>
           </div>
 
+          {/* Name Input */}
           <div className="mb-3">
-            <label htmlFor="editPersonNameField" className="form-label">
-              Person Name
+            <label htmlFor="name" className="form-label">
+              Name
             </label>
             <input
               type="text"
-              id="editPersonNameField"
-              className="form-control"
-              name="personName"
-              placeholder="Enter person's name"
-              value={formData.personName || ""}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
+              className="form-control"
               required
             />
-            <div className="invalid-feedback">
-              Please enter a person's name.
-            </div>
           </div>
 
+          {/* Email Input */}
           <div className="mb-3">
-            <label htmlFor="editEmailField" className="form-label">
+            <label htmlFor="email" className="form-label">
               Email
             </label>
             <input
               type="email"
-              id="editEmailField"
-              className="form-control"
               name="email"
-              placeholder="Enter email"
-              value={formData.email || ""}
+              value={formData.email}
               onChange={handleChange}
+              className="form-control"
               required
             />
-            <div className="invalid-feedback">Please enter a valid email.</div>
           </div>
 
+          {/* Mobile Input */}
           <div className="mb-3">
-            <label htmlFor="editMobileField" className="form-label">
+            <label htmlFor="mobile" className="form-label">
               Mobile
             </label>
             <input
               type="tel"
-              id="editMobileField"
-              className="form-control"
               name="mobile"
-              placeholder="Enter mobile number"
-              value={formData.mobile || ""}
+              value={formData.mobile}
               onChange={handleChange}
+              className="form-control"
               required
             />
-            <div className="invalid-feedback">
-              Please enter a mobile number.
-            </div>
           </div>
 
+          {/* Subject Input */}
           <div className="mb-3">
-            <label htmlFor="editSubjectField" className="form-label">
+            <label htmlFor="subject" className="form-label">
               Subject
             </label>
             <input
               type="text"
-              id="editSubjectField"
-              className="form-control"
               name="subject"
-              placeholder="Enter subject"
-              value={formData.subject || ""}
+              value={formData.subject}
               onChange={handleChange}
+              className="form-control"
               required
             />
-            <div className="invalid-feedback">Please enter a subject.</div>
           </div>
 
+          {/* Message Textarea */}
           <div className="mb-3">
-            <label htmlFor="editMessageField" className="form-label">
+            <label htmlFor="message" className="form-label">
               Message
             </label>
             <textarea
-              className="form-control"
-              id="editMessageField"
-              rows="5"
               name="message"
-              placeholder="Enter your message"
-              value={formData.message || ""}
+              value={formData.message}
               onChange={handleChange}
+              className="form-control"
               required
-            ></textarea>
-            <div className="invalid-feedback">Please enter a message.</div>
+            />
           </div>
 
+          {/* Status Select Dropdown */}
           <div className="mb-3">
-            <label htmlFor="editStatusField" className="form-label">
+            <label htmlFor="status" className="form-label">
               Status
             </label>
             <select
-              id="editStatusField"
-              className="form-select"
               name="status"
-              value={formData.status || ""}
+              value={formData.status || ""} // Ensure this matches selected status
               onChange={handleChange}
+              className="form-control"
               required
             >
               <option value="" disabled>
                 Select status
               </option>
-              <option value="approved">Approved</option>
-              <option value="pending">Pending</option>
-              <option value="denied">Denied</option>
+              <option value="APPROVED">APPROVED</option>
+              <option value="PENDING">PENDING</option>
+              <option value="DENIED">DENIED</option>
             </select>
-            <div className="invalid-feedback">Please select a status.</div>
           </div>
+
+          <Button variant="primary" type="submit">
+            Save Changes
+          </Button>
         </form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="success" type="submit" form="editEnquiryForm">
-          Save
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };
