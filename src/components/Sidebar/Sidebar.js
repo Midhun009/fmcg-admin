@@ -191,7 +191,7 @@ const Sidebar = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="#" className="waves-effect">
+                  <Link to="/listing-state" className="waves-effect">
                     States
                   </Link>
                 </li>

@@ -11,6 +11,7 @@ import ListingReview from "./pages/Reviews/Listing/ListingReviews";
 import ProductReview from "./pages/Reviews/Product/ProductReviews";
 import ListingKeywords from "./pages/Keyword/Listing/ListingKeywords";
 import ListingCountries from "./pages/Location/Country/ListingCountries";
+import ListingStates from "./pages/Location/State/ListingStates";
 
 
 const AppRoutes = () => {
@@ -26,6 +27,7 @@ const AppRoutes = () => {
         <Route path="product-reviews" element={<ProductReview />} />
         <Route path="listing-keywords" element={<ListingKeywords />} />
         <Route path="listing-country" element={<ListingCountries />} />
+        <Route path="listing-state" element={<ListingStates />} />
        
         {/* <Route path="profile-settings" element={<ProfileSettings />} /> */}
 

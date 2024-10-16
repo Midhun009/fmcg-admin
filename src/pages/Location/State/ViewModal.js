@@ -1,15 +1,30 @@
 import React from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 
-const ViewCountryModal = ({ isVisible, onClose, selectedCountry }) => {
-  if (!selectedCountry) return null; // Prevent rendering if no country is selected
+const ViewStateModal = ({ isVisible, onClose, selectedState }) => {
+  if (!selectedState) return null; // Prevent rendering if no state is selected
 
   return (
     <Modal isOpen={isVisible} toggle={onClose}>
-      <ModalHeader toggle={onClose}>View Country</ModalHeader>
+      <ModalHeader toggle={onClose}>View State</ModalHeader>
       <ModalBody>
         <p>
-          <strong>Country Name:</strong> {selectedCountry.name}
+          <strong>ID:</strong> {selectedState.id}
+        </p>
+        <p>
+          <strong>Country Name:</strong> {selectedState.country_name}{" "}
+          {/* Assuming this field is available */}
+        </p>
+        <p>
+          <strong>State Name:</strong> {selectedState.name}
+        </p>
+        <p>
+          <strong>Created Date:</strong>{" "}
+          {new Date(selectedState.created).toLocaleString()}
+        </p>
+        <p>
+          <strong>Updated Date:</strong>{" "}
+          {new Date(selectedState.updated).toLocaleString()}
         </p>
       </ModalBody>
       <ModalFooter>
@@ -21,4 +36,4 @@ const ViewCountryModal = ({ isVisible, onClose, selectedCountry }) => {
   );
 };
 
-export default ViewCountryModal;
+export default ViewStateModal;

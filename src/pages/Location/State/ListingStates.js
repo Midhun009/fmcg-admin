@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getCountries, createCountry, editCountry, deleteCountry } from "./api";
+import { getStates, createState, editState, deleteState } from "./api"; // Update API functions
 import "bootstrap/dist/css/bootstrap.min.css";
-import AddCountryModal from "./AddModal"; // Modal for adding a country
-import EditCountryModal from "./EditModal"; // Modal for editing a country
-import DeleteCountryModal from "./DeleteModal"; // Modal for deleting a country
-import ViewCountryModal from "./ViewModal"; // Modal for viewing country details
+import AddStateModal from "./AddModal"; // Modal for adding a state
+import EditStateModal from "./EditModal"; // Modal for editing a state
+import DeleteStateModal from "./DeleteModal"; // Modal for deleting a state
+import ViewStateModal from "./ViewModal"; // Modal for viewing state details
 
-const ListingCountries = () => {
-  const [countries, setCountries] = useState([]);
-  const [filteredCountries, setFilteredCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
+const ListingStates = () => {
+  const [states, setStates] = useState([]);
+  const [filteredStates, setFilteredStates] = useState([]);
+  const [selectedState, setSelectedState] = useState(null);
   const [modalState, setModalState] = useState({
     add: false,
     edit: false,
@@ -20,31 +20,31 @@ const ListingCountries = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [countriesPerPage] = useState(5); // Number of countries per page
+  const [statesPerPage] = useState(5); // Number of states per page
 
   useEffect(() => {
-    fetchCountries();
+    fetchStates();
   }, []);
 
   useEffect(() => {
-    filterCountries();
-  }, [countries, searchTerm]);
+    filterStates();
+  }, [states, searchTerm]);
 
-  const fetchCountries = async () => {
+  const fetchStates = async () => {
     try {
-      const data = await getCountries();
-      setCountries(data);
+      const data = await getStates(); // Ensure API returns expected fields
+      setStates(data);
     } catch (error) {
-      console.error("Error fetching countries:", error);
-      toast.error("Error fetching countries. Please try again.");
+      console.error("Error fetching states:", error);
+      toast.error("Error fetching states. Please try again.");
     }
   };
 
-  const filterCountries = () => {
-    const filtered = countries.filter((country) =>
-      country.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filterStates = () => {
+    const filtered = states.filter((state) =>
+      state.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredCountries(filtered);
+    setFilteredStates(filtered);
     setCurrentPage(1); // Reset to the first page when filtering
   };
 
@@ -52,55 +52,53 @@ const ListingCountries = () => {
     setModalState((prev) => ({ ...prev, [modal]: state }));
   };
 
-  const handleCountryUpdate = async (updatedCountry) => {
+  const handleStateUpdate = async (updatedState) => {
     try {
-      const response = await editCountry(selectedCountry.id, updatedCountry);
-      setCountries((prevCountries) =>
-        prevCountries.map((country) =>
-          country.id === response.id ? response : country
-        )
+      const response = await editState(selectedState.id, updatedState); // Ensure this returns the correct object
+      setStates((prevStates) =>
+        prevStates.map((state) => (state.id === response.id ? response : state))
       );
-      toast.success("Country updated successfully!");
+      toast.success("State updated successfully!");
     } catch (error) {
-      console.error("Error updating country:", error);
-      toast.error("Failed to update country. Please try again.");
+      console.error("Error updating state:", error);
+      toast.error("Failed to update state. Please try again.");
     } finally {
       toggleModal("edit", false);
     }
   };
 
-  const handleAddCountry = async (newCountry) => {
+  const handleAddState = async (newState) => {
     try {
-      const addedCountry = await createCountry(newCountry);
-      setCountries((prevCountries) => [...prevCountries, addedCountry]);
-      toast.success("Country added successfully!");
+      const addedState = await createState(newState); // Ensure this returns the correct object
+      setStates((prevStates) => [...prevStates, addedState]);
+      toast.success("State added successfully!");
       toggleModal("add", false);
     } catch (error) {
-      toast.error("Error adding country. Please try again.");
+      toast.error("Error adding state. Please try again.");
     }
   };
 
-  const handleDeleteCountry = async (countryId) => {
+  const handleDeleteState = async (stateId) => {
     try {
-      await deleteCountry(countryId);
-      setCountries((prevCountries) =>
-        prevCountries.filter((country) => country.id !== countryId)
+      await deleteState(stateId); // Ensure this works correctly
+      setStates((prevStates) =>
+        prevStates.filter((state) => state.id !== stateId)
       );
-      toast.success("Country deleted successfully!");
+      toast.success("State deleted successfully!");
     } catch (error) {
-      toast.error("Error deleting country. Please try again.");
+      toast.error("Error deleting state. Please try again.");
     } finally {
       toggleModal("delete", false);
     }
   };
 
-  const renderActionButtons = (country) => (
+  const renderActionButtons = (state) => (
     <div className="d-flex align-items-center">
       <button
         type="button"
         className="btn btn-light d-flex align-items-center"
         onClick={() => {
-          setSelectedCountry(country);
+          setSelectedState(state);
           toggleModal("view");
         }}
         style={buttonStyle}
@@ -111,7 +109,7 @@ const ListingCountries = () => {
         type="button"
         className="btn btn-light d-flex align-items-center"
         onClick={() => {
-          setSelectedCountry(country);
+          setSelectedState(state);
           toggleModal("edit");
         }}
         style={buttonStyle}
@@ -122,7 +120,7 @@ const ListingCountries = () => {
         type="button"
         className="d-flex align-items-center"
         onClick={() => {
-          setSelectedCountry(country);
+          setSelectedState(state);
           toggleModal("delete");
         }}
         style={buttonStyle}
@@ -133,18 +131,18 @@ const ListingCountries = () => {
   );
 
   // Pagination Logic
-  const indexOfLastCountry = currentPage * countriesPerPage;
-  const indexOfFirstCountry = indexOfLastCountry - countriesPerPage;
-  const currentCountries = filteredCountries.slice(
-    indexOfFirstCountry,
-    indexOfLastCountry
+  const indexOfLastState = currentPage * statesPerPage;
+  const indexOfFirstState = indexOfLastState - statesPerPage;
+  const currentStates = filteredStates.slice(
+    indexOfFirstState,
+    indexOfLastState
   );
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  const totalPages = Math.ceil(filteredCountries.length / countriesPerPage);
+  const totalPages = Math.ceil(filteredStates.length / statesPerPage);
 
   return (
     <div className="page-content">
@@ -165,7 +163,7 @@ const ListingCountries = () => {
               className="btn btn-success btn-rounded waves-effect mb-2 me-2"
               onClick={() => toggleModal("add")}
             >
-              <i className="mdi mdi-plus me-1"></i> Add Country
+              <i className="mdi mdi-plus me-1"></i> Add State
             </button>
           </div>
         </div>
@@ -175,20 +173,22 @@ const ListingCountries = () => {
             <thead className="table-light">
               <tr>
                 <th>ID</th>
-                <th>Country Name</th>
+                <th>Country Name</th> {/* Updated column for country name */}
+                <th>State Name</th>
                 <th>Created</th>
                 <th>Updated</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {currentCountries.map((country) => (
-                <tr key={country.id}>
-                  <td>{country.id}</td>
-                  <td>{country.name}</td>
-                  <td>{new Date(country.created).toLocaleDateString()}</td>
-                  <td>{new Date(country.updated).toLocaleDateString()}</td>
-                  <td>{renderActionButtons(country)}</td>
+              {currentStates.map((state) => (
+                <tr key={state.id}>
+                  <td>{state.id}</td>
+                  <td>{state.country_name}</td> {/* Displaying Country Name */}
+                  <td>{state.name}</td>
+                  <td>{new Date(state.created).toLocaleDateString()}</td>
+                  <td>{new Date(state.updated).toLocaleDateString()}</td>
+                  <td>{renderActionButtons(state)}</td>
                 </tr>
               ))}
             </tbody>
@@ -217,30 +217,30 @@ const ListingCountries = () => {
         </nav>
       </div>
 
-      <AddCountryModal
+      <AddStateModal
         isVisible={modalState.add}
         onClose={() => toggleModal("add", false)}
-        onAdd={handleAddCountry}
+        onAdd={handleAddState}
       />
 
-      <EditCountryModal
+      <EditStateModal
         isVisible={modalState.edit}
         onClose={() => toggleModal("edit", false)}
-        onSave={handleCountryUpdate}
-        selectedCountry={selectedCountry}
+        onSave={handleStateUpdate}
+        selectedState={selectedState}
       />
 
-      <DeleteCountryModal
+      <DeleteStateModal
         isVisible={modalState.delete}
         onClose={() => toggleModal("delete", false)}
-        onDeleteCountry={handleDeleteCountry}
-        selectedCountry={selectedCountry}
+        onDeleteState={handleDeleteState}
+        selectedState={selectedState}
       />
 
-      <ViewCountryModal
+      <ViewStateModal
         isVisible={modalState.view}
         onClose={() => toggleModal("view", false)}
-        selectedCountry={selectedCountry}
+        selectedState={selectedState}
       />
     </div>
   );
@@ -260,4 +260,4 @@ const iconStyle = (color) => ({
   marginLeft: "5px",
 });
 
-export default ListingCountries;
+export default ListingStates;

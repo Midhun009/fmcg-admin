@@ -2,15 +2,17 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-const DeleteCountryModal = ({
+const DeleteStateModal = ({
   isVisible,
   onClose,
-  onDeleteCountry,
-  selectedCountry,
+  onDeleteState,
+  selectedState,
 }) => {
   const handleDelete = () => {
-    onDeleteCountry(selectedCountry.id); // Call the delete function with selected country ID
-    onClose(); // Close the modal after the delete function is triggered
+    if (selectedState) {
+      onDeleteState(selectedState.id); // Call the delete function with selected state ID
+      onClose(); // Close the modal after the delete function is triggered
+    }
   };
 
   return (
@@ -24,10 +26,10 @@ const DeleteCountryModal = ({
         <Modal.Title>Confirm Deletion</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Are you sure you want to delete this country?</p>
+        <p>Are you sure you want to delete this state?</p>
         <p>
-          <strong>{selectedCountry?.name}</strong>{" "}
-          {/* Display the country name */}
+          <strong>{selectedState?.name}</strong>{" "}
+          {/* Display the state name if it exists */}
         </p>
       </Modal.Body>
       <Modal.Footer>
@@ -42,4 +44,4 @@ const DeleteCountryModal = ({
   );
 };
 
-export default DeleteCountryModal;
+export default DeleteStateModal;
