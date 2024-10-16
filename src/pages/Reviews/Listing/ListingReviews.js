@@ -112,32 +112,44 @@ const ListingReview = () => {
     }
   };
 
-  const renderActionButtons = (review) => (
-    <div className="d-flex align-items-center">
-      <button
-        type="button"
-        className="btn btn-light d-flex align-items-center"
-        onClick={() => {
-          setSelectedReview(review);
-          toggleModal("edit");
-        }}
-        style={buttonStyle}
-      >
-        <i className="mdi mdi-pencil" style={iconStyle("green")}></i>
-      </button>
-      <button
-        type="button"
-        className="d-flex align-items-center"
-        onClick={() => {
-          setSelectedReview(review);
-          toggleModal("delete");
-        }}
-        style={buttonStyle}
-      >
-        <i className="mdi mdi-delete" style={iconStyle("red")}></i>
-      </button>
-    </div>
-  );
+const renderActionButtons = (review) => (
+  <div className="d-flex align-items-center">
+    <button
+      type="button"
+      className="btn btn-light d-flex align-items-center"
+      onClick={() => {
+        setSelectedReview(review);
+        toggleModal("view"); // Open the view modal
+      }}
+      style={buttonStyle}
+    >
+      <i className="mdi mdi-eye" style={iconStyle("blue")}></i>
+    </button>
+    <button
+      type="button"
+      className="btn btn-light d-flex align-items-center"
+      onClick={() => {
+        setSelectedReview(review);
+        toggleModal("edit");
+      }}
+      style={buttonStyle}
+    >
+      <i className="mdi mdi-pencil" style={iconStyle("green")}></i>
+    </button>
+    <button
+      type="button"
+      className="d-flex align-items-center"
+      onClick={() => {
+        setSelectedReview(review);
+        toggleModal("delete");
+      }}
+      style={buttonStyle}
+    >
+      <i className="mdi mdi-delete" style={iconStyle("red")}></i>
+    </button>
+  </div>
+);
+
 
   // Pagination Logic
   const indexOfLastReview = currentPage * reviewsPerPage;
@@ -276,6 +288,12 @@ const ListingReview = () => {
         onSave={handleReviewUpdate}
         selectedReview={selectedReview}
         organizations={organizations} // Pass the organizations array if needed
+      />
+
+      <ViewReviewModal
+        isVisible={modalState.view}
+        onClose={() => toggleModal("view", false)}
+        selectedReview={selectedReview}
       />
 
       <DeleteReviewModal
