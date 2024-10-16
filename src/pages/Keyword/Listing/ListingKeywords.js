@@ -2,49 +2,49 @@ import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  getReviews,
-  createReview,
-  editReview,
-  deleteReview,
+  getKeywords, // Update your API import
+  createKeyword, // Update for keyword creation
+  editKeyword, // Update for keyword editing
+  deleteKeyword, // Update for keyword deletion
   getOrganizations,
-} from "./api"; // Update your api import
+} from "./api";
 import "bootstrap/dist/css/bootstrap.min.css";
-import AddReviewModal from "./AddReviewModal";
-import EditReviewModal from "./EditReviewModal";
-import ViewReviewModal from "./ViewReviewModal";
-import DeleteReviewModal from "./DeleteReviewModal";
+import AddKeywordModal from "./AddKeywordModal"; // Updated modal import
+import EditKeywordModal from "./EditKeywordModal"; // Updated modal import
+import DeleteKeywordModal from "./DeleteKeywordModal"; // Updated modal import
+import ViewKeywordModal from "./ViewKeywordModal"; // New modal import
 
-const ListingReview = () => {
-  const [reviews, setReviews] = useState([]);
-  const [filteredReviews, setFilteredReviews] = useState([]);
-  const [selectedReview, setSelectedReview] = useState(null);
+const ListingKeywords = () => {
+  const [keywords, setKeywords] = useState([]);
+  const [filteredKeywords, setFilteredKeywords] = useState([]);
+  const [selectedKeyword, setSelectedKeyword] = useState(null);
   const [modalState, setModalState] = useState({
     add: false,
     edit: false,
-    view: false,
     delete: false,
+    view: false, // New view state
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [reviewsPerPage] = useState(5); // Number of reviews per page
+  const [keywordsPerPage] = useState(5); // Number of keywords per page
   const [organizations, setOrganizations] = useState([]); // State for organizations
 
   useEffect(() => {
-    fetchReviews();
+    fetchKeywords();
     fetchOrganizations(); // Fetch organizations on mount
   }, []);
 
   useEffect(() => {
-    filterReviews();
-  }, [reviews, searchTerm]);
+    filterKeywords();
+  }, [keywords, searchTerm]);
 
-  const fetchReviews = async () => {
+  const fetchKeywords = async () => {
     try {
-      const data = await getReviews();
-      setReviews(data);
+      const data = await getKeywords();
+      setKeywords(data);
     } catch (error) {
-      console.error("Error fetching reviews:", error);
-      toast.error("Error fetching reviews. Please try again.");
+      console.error("Error fetching keywords:", error);
+      toast.error("Error fetching keywords. Please try again.");
     }
   };
 
@@ -58,11 +58,13 @@ const ListingReview = () => {
     }
   };
 
-  const filterReviews = () => {
-    const filtered = reviews.filter((review) =>
-      review.subject.toLowerCase().includes(searchTerm.toLowerCase())
+  const filterKeywords = () => {
+    const filtered = keywords.filter(
+      (keyword) =>
+        keyword.name &&
+        keyword.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredReviews(filtered);
+    setFilteredKeywords(filtered);
     setCurrentPage(1); // Reset to the first page when filtering
   };
 
@@ -70,55 +72,67 @@ const ListingReview = () => {
     setModalState((prev) => ({ ...prev, [modal]: state }));
   };
 
-  const handleReviewUpdate = async (updatedReview) => {
+  const handleKeywordUpdate = async (updatedKeyword) => {
     try {
-      const response = await editReview(selectedReview.id, updatedReview);
-      setReviews((prevReviews) =>
-        prevReviews.map((review) =>
-          review.id === response.id ? response : review
+      const response = await editKeyword(selectedKeyword.id, updatedKeyword);
+      setKeywords((prevKeywords) =>
+        prevKeywords.map((keyword) =>
+          keyword.id === response.id ? response : keyword
         )
       );
-      toast.success("Review updated successfully!");
+      toast.success("Keyword updated successfully!");
     } catch (error) {
-      console.error("Error updating review:", error);
-      toast.error("Failed to update review. Please try again.");
+      console.error("Error updating keyword:", error);
+      toast.error("Failed to update keyword. Please try again.");
     } finally {
       toggleModal("edit", false);
     }
   };
 
-  const handleAddReview = async (newReview) => {
+  const handleAddKeyword = async (newKeyword) => {
     try {
-      const addedReview = await createReview(newReview);
-      setReviews((prevReviews) => [...prevReviews, addedReview]);
-      toast.success("Review added successfully!");
+      const addedKeyword = await createKeyword(newKeyword);
+      setKeywords((prevKeywords) => [...prevKeywords, addedKeyword]);
+      toast.success("Keyword added successfully!");
       toggleModal("add", false);
     } catch (error) {
-      toast.error("Error adding review. Please try again.");
+      toast.error("Error adding keyword. Please try again.");
     }
   };
 
-  const handleDeleteReview = async (reviewId) => {
+  const handleDeleteKeyword = async (keywordId) => {
     try {
-      await deleteReview(reviewId);
-      setReviews((prevReviews) =>
-        prevReviews.filter((review) => review.id !== reviewId)
+      await deleteKeyword(keywordId);
+      setKeywords((prevKeywords) =>
+        prevKeywords.filter((keyword) => keyword.id !== keywordId)
       );
-      toast.success("Review deleted successfully!"); // Success toast
+      toast.success("Keyword deleted successfully!"); // Success toast
     } catch (error) {
-      toast.error("Error deleting review. Please try again."); // Error toast
+      toast.error("Error deleting keyword. Please try again."); // Error toast
     } finally {
       toggleModal("delete", false); // Close the modal after API call finishes
     }
   };
 
-  const renderActionButtons = (review) => (
+  const renderActionButtons = (keyword) => (
     <div className="d-flex align-items-center">
       <button
         type="button"
         className="btn btn-light d-flex align-items-center"
         onClick={() => {
-          setSelectedReview(review);
+          setSelectedKeyword(keyword);
+          toggleModal("view");
+        }}
+        style={buttonStyle}
+      >
+        <i className="mdi mdi-eye" style={iconStyle("blue")}></i>{" "}
+        {/* View icon */}
+      </button>
+      <button
+        type="button"
+        className="btn btn-light d-flex align-items-center"
+        onClick={() => {
+          setSelectedKeyword(keyword);
           toggleModal("edit");
         }}
         style={buttonStyle}
@@ -129,7 +143,7 @@ const ListingReview = () => {
         type="button"
         className="d-flex align-items-center"
         onClick={() => {
-          setSelectedReview(review);
+          setSelectedKeyword(keyword);
           toggleModal("delete");
         }}
         style={buttonStyle}
@@ -140,18 +154,18 @@ const ListingReview = () => {
   );
 
   // Pagination Logic
-  const indexOfLastReview = currentPage * reviewsPerPage;
-  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-  const currentReviews = filteredReviews.slice(
-    indexOfFirstReview,
-    indexOfLastReview
+  const indexOfLastKeyword = currentPage * keywordsPerPage;
+  const indexOfFirstKeyword = indexOfLastKeyword - keywordsPerPage;
+  const currentKeywords = filteredKeywords.slice(
+    indexOfFirstKeyword,
+    indexOfLastKeyword
   );
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
+  const totalPages = Math.ceil(filteredKeywords.length / keywordsPerPage);
 
   return (
     <div className="page-content">
@@ -172,17 +186,17 @@ const ListingReview = () => {
               className="btn btn-success btn-rounded waves-effect mb-2 me-2"
               onClick={() => toggleModal("add")}
             >
-              <i className="mdi mdi-plus me-1"></i> Add Review
+              <i className="mdi mdi-plus me-1"></i> Add Keyword
             </button>
             <button
               className="btn btn-primary btn-rounded waves-effect me-2"
-              title="Export reviews"
+              title="Export keywords"
             >
               <i className="mdi mdi-export me-1"></i> Export
             </button>
             <button
               className="btn btn-secondary btn-rounded waves-effect"
-              title="Import reviews"
+              title="Import keywords"
             >
               <i className="mdi mdi-import me-1"></i> Import
             </button>
@@ -193,48 +207,19 @@ const ListingReview = () => {
           <table className="table table-striped table-hover align-middle table-nowrap">
             <thead className="table-light">
               <tr>
-                <th>Rating</th>
-                <th>Subject</th>
-                <th>Comment</th>
-                <th>Created</th>
-                <th>Updated</th>
-                <th>Status</th>
-                <th>Company Name</th>
+                <th>Keyword</th>
+                <th>Slug</th>
+                <th>Section</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {currentReviews.map((review) => (
-                <tr key={review.id}>
-                  <td>
-                    {/* Display stars based on the review.rating */}
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <i
-                        key={index}
-                        className={`mdi mdi-star${
-                          index < review.rating ? "" : "-outline"
-                        }`}
-                        style={{ color: "#FFD700" }} // Gold color for stars
-                      ></i>
-                    ))}
-                    {/* Display the number rating next to the stars */}
-                    <span style={{ marginLeft: "8px", fontWeight: "bold" }}>
-                      {review.rating}/5
-                    </span>
-                  </td>
-                  <td>{review.subject}</td>
-                  <td>{review.comment}</td>
-                  <td>{new Date(review.created).toLocaleString()}</td>
-                  <td>{new Date(review.updated).toLocaleString()}</td>
-                  <td>
-                    <span
-                      className={`badge badge-soft-${review.status.toLowerCase()}`}
-                    >
-                      {review.status}
-                    </span>
-                  </td>
-                  <td>{review.company_name}</td>
-                  <td>{renderActionButtons(review)}</td>
+              {currentKeywords.map((keyword) => (
+                <tr key={keyword.id}>
+                  <td>{keyword.name}</td>
+                  <td>{keyword.slug}</td>
+                  <td>{keyword.section}</td>
+                  <td>{renderActionButtons(keyword)}</td>
                 </tr>
               ))}
             </tbody>
@@ -263,26 +248,32 @@ const ListingReview = () => {
         </nav>
       </div>
 
-      <AddReviewModal
+      <AddKeywordModal
         isVisible={modalState.add}
         onClose={() => toggleModal("add", false)}
-        onAdd={handleAddReview}
+        onAdd={handleAddKeyword}
         organizations={organizations} // Pass the organizations array if needed
       />
 
-      <EditReviewModal
+      <EditKeywordModal
         isVisible={modalState.edit}
         onClose={() => toggleModal("edit", false)}
-        onSave={handleReviewUpdate}
-        selectedReview={selectedReview}
+        onSave={handleKeywordUpdate}
+        selectedKeyword={selectedKeyword}
         organizations={organizations} // Pass the organizations array if needed
       />
 
-      <DeleteReviewModal
+      <DeleteKeywordModal
         isVisible={modalState.delete}
         onClose={() => toggleModal("delete", false)}
-        onDeleteReview={handleDeleteReview}
-        selectedReview={selectedReview}
+        onDeleteKeyword={handleDeleteKeyword}
+        selectedKeyword={selectedKeyword}
+      />
+
+      <ViewKeywordModal
+        isVisible={modalState.view}
+        onClose={() => toggleModal("view", false)}
+        selectedKeyword={selectedKeyword}
       />
     </div>
   );
@@ -302,4 +293,4 @@ const iconStyle = (color) => ({
   marginLeft: "5px",
 });
 
-export default ListingReview;
+export default ListingKeywords;

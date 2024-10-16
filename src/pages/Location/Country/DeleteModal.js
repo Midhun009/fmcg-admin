@@ -2,14 +2,14 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-const DeleteReviewModal = ({
+const DeleteCountryModal = ({
   isVisible,
   onClose,
-  onDeleteReview,
-  selectedReview,
+  onDeleteCountry,
+  selectedCountry,
 }) => {
   const handleDelete = () => {
-    onDeleteReview(selectedReview.id); // Call the delete function with selected review ID
+    onDeleteCountry(selectedCountry.id); // Call the delete function with selected country ID
     onClose(); // Close the modal after the delete function is triggered
   };
 
@@ -24,9 +24,10 @@ const DeleteReviewModal = ({
         <Modal.Title>Confirm Deletion</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Are you sure you want to remove this review?</p>
+        <p>Are you sure you want to delete this country?</p>
         <p>
-          <strong>{selectedReview?.subject}</strong>
+          <strong>{selectedCountry?.name}</strong>{" "}
+          {/* Display the country name */}
         </p>
       </Modal.Body>
       <Modal.Footer>
@@ -41,4 +42,4 @@ const DeleteReviewModal = ({
   );
 };
 
-export default DeleteReviewModal;
+export default DeleteCountryModal;

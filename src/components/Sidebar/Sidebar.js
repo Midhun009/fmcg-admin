@@ -158,8 +158,8 @@ const Sidebar = () => {
             {/* Keywords */}
             <li>
               <Link
-                to="#"
-                className={`has-arrow waves-effect ${
+                to="/listing-keywords"
+                className={`waves-effect ${
                   activeMenu === "keywords" ? "active" : ""
                 }`}
                 onClick={() => handleMenuClick("keywords")}
@@ -167,21 +167,6 @@ const Sidebar = () => {
                 <i className="bx bx-search"></i>
                 <span>Keywords</span>
               </Link>
-              <ul
-                className={`sub-menu ${openMenu === "keywords" ? "show" : ""}`}
-                aria-expanded={openMenu === "keywords"}
-              >
-                <li>
-                  <Link to="#" className="waves-effect">
-                    Listing Keywords
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="waves-effect">
-                    Product Keywords
-                  </Link>
-                </li>
-              </ul>
             </li>
 
             {/* Location */}
@@ -201,7 +186,7 @@ const Sidebar = () => {
                 aria-expanded={openMenu === "location"}
               >
                 <li>
-                  <Link to="#" className="waves-effect">
+                  <Link to="/listing-country" className="waves-effect">
                     Countries
                   </Link>
                 </li>

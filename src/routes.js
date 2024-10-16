@@ -9,6 +9,9 @@ import ListingEnquiry from "./pages/Enquiry/Listing/ListingEnquiry";
 import ProductEnquiry from "./pages/Enquiry/Product/ProductEnquiry";
 import ListingReview from "./pages/Reviews/Listing/ListingReviews";
 import ProductReview from "./pages/Reviews/Product/ProductReviews";
+import ListingKeywords from "./pages/Keyword/Listing/ListingKeywords";
+import ListingCountries from "./pages/Location/Country/ListingCountries";
+
 
 const AppRoutes = () => {
   return (
@@ -21,6 +24,9 @@ const AppRoutes = () => {
         <Route path="product-enquiry" element={<ProductEnquiry />} />
         <Route path="listing-reviews" element={<ListingReview />} />
         <Route path="product-reviews" element={<ProductReview />} />
+        <Route path="listing-keywords" element={<ListingKeywords />} />
+        <Route path="listing-country" element={<ListingCountries />} />
+       
         {/* <Route path="profile-settings" element={<ProfileSettings />} /> */}
 
         {/* Optionally, add a redirect for the root path */}
