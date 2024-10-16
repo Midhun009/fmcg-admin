@@ -143,12 +143,12 @@ const Sidebar = () => {
                 aria-expanded={openMenu === "reviews"}
               >
                 <li>
-                  <Link to="#" className="waves-effect">
+                  <Link to="/listing-reviews" className="waves-effect">
                     Listing Reviews
                   </Link>
                 </li>
                 <li>
-                  <Link to="#" className="waves-effect">
+                  <Link to="/product-reviews" className="waves-effect">
                     Product Reviews
                   </Link>
                 </li>
