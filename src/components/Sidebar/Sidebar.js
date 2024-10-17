@@ -246,7 +246,7 @@ const Sidebar = () => {
             {/* Subscription Packages */}
             <li>
               <Link
-                to="#"
+                to="/listing-package"
                 className={`waves-effect ${
                   activeMenu === "subscription-package" ? "active" : ""
                 }`}
@@ -260,7 +260,7 @@ const Sidebar = () => {
             {/* Insights */}
             <li>
               <Link
-                to="#"
+                to="/insights"
                 className={`waves-effect ${
                   activeMenu === "insights" ? "active" : ""
                 }`}
