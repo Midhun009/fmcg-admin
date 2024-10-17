@@ -232,7 +232,7 @@ const Sidebar = () => {
             {/* Advertisements */}
             <li>
               <Link
-                to="#"
+                to="/listing-ads"
                 className={`waves-effect ${
                   activeMenu === "advertisement" ? "active" : ""
                 }`}
