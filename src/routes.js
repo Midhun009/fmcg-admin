@@ -14,7 +14,7 @@ import ListingCountries from "./pages/Location/Country/ListingCountries";
 import ListingStates from "./pages/Location/State/ListingStates";
 import ListingAds from "./pages/Advertisement/ListingAds";
 import ListingPackages from "./pages/Subscription/ListingPackages";
-
+import Insights from "./pages/Insights/Insights";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -31,6 +31,7 @@ const AppRoutes = () => {
         <Route path="listing-state" element={<ListingStates />} />
         <Route path="listing-ads" element={<ListingAds />} />
         <Route path="listing-package" element={<ListingPackages />} />
+        <Route path="insights" element={<Insights />} />
        
         {/* <Route path="profile-settings" element={<ProfileSettings />} /> */}
 
