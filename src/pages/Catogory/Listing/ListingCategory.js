@@ -171,7 +171,7 @@ const ListingCategory = () => {
           </div>
           <div className="col-sm-8 text-sm-end">
             <button
-              className="btn btn-success btn-rounded waves-effect mb-2 me-2"
+              className="btn btn-success btn-rounded waves-effect  me-2"
               onClick={() => toggleModal("add")}
             >
               <i className="mdi mdi-plus me-1"></i> Add Category
@@ -202,6 +202,8 @@ const ListingCategory = () => {
                 <th>Name</th>
                 <th>Image</th>
                 <th>Slug</th>
+                <th>Created</th>
+                <th>Updated</th>
                 <th>View Details</th>
                 <th>Action</th>
               </tr>
@@ -218,6 +220,8 @@ const ListingCategory = () => {
                     />
                   </td>
                   <td>{category.slug}</td>
+                  <td>{category.created}</td>
+                  <td>{category.updated}</td>
                   <td>
                     <button
                       className="btn btn-primary rounded-pill btn-sm"
